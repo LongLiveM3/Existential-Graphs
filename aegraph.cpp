@@ -248,23 +248,33 @@ std::vector<std::vector<int>> AEGraph::get_paths_to(const AEGraph& other)
     return paths;
 }
 
+void possibleDCR(AEGraph x, int anterior,
+	std::vector<std::vector<int>>& rez, std::vector<int>& path){
+	
+	if(anterior >= 1 && x.num_subgraphs() == 1 && x.num_atoms() == 0){
+		rez.push_back(path);
+	}
+	if(x.num_subgraphs() >= 1){
+		for(int i = 0; i < x.num_subgraphs(); ++i){
+			path.push_back(i);
+			possibleDCR(x.subgraphs[i], x.num_subgraphs(), rez, path);
+			path.pop_back();
+		}
+	}
+}
+
 std::vector<std::vector<int>> AEGraph::possible_double_cuts() const {
     // 10p
-    std::vector<std::vector<int>> v = {};
- //    std::vector<int> path = {};
-	// for(int i = 0; i < num_subgraphs(); i++){
-	//    	if(num_subgraphs() == 1 && subgraphs[i].num_subgraphs() == 1){
-	// 		path.push_back()
-	//     	subgraphs[i].possible_double_cuts();
- //    	}
- //    }
-
-    return v;
+    std::vector<std::vector<int>> rez = {};
+    std::vector<int> path = {};
+    AEGraph g(repr());
+    possibleDCR(g, -1, rez, path);
+    return rez;
 }
 
 void copyGraf(AEGraph& x, const AEGraph* y){
 	int ok = 1;
-    for(int i = 0; i < y->num_subgraphs(); i++){
+    for(int i = 0; i < y->num_subgraphs(); ++i){
     	x.subgraphs.push_back(y->subgraphs[i]);
     	if(ok){
     		for(auto i : y->atoms){
@@ -276,26 +286,29 @@ void copyGraf(AEGraph& x, const AEGraph* y){
 }
 
 void doubleCutR(AEGraph& rez, std::vector<int>& where, int& ok){
-		for(int i = 0; i < rez.num_subgraphs(); i++){
+		for(int i = 0; i < rez.num_subgraphs(); ++i){
 			if(where.front() == i){
 		    	if(where.size() > 1){
 		    		where.erase(where.begin());
 		    		doubleCutR(rez.subgraphs[i], where, ok);
 		    	}
 		  		if(ok && where.size() == 1){
-			  		rez.subgraphs[where[0]] = rez.subgraphs[where[0]].subgraphs[0];
-					for(auto a : rez.subgraphs[where[0]].atoms)
+			  		rez.subgraphs[where[0]] =
+			  			rez.subgraphs[where[0]].subgraphs[0];
+					for(auto a : rez.subgraphs[where[0]].atoms){
 						rez.atoms.push_back(a);
+					}
 					rez.subgraphs[where[0]].atoms.clear();
 					std::vector<AEGraph> sub;
 					for(int i = 0; i < rez.num_subgraphs(); i++){
-						if(i != where[0])
+						if(i != where[0]){
 							sub.push_back(rez.subgraphs[i]);
+						}
 					}
 					rez.subgraphs.clear();
 					rez.subgraphs = sub;
 					ok = 0;
-					doubleCutR(rez,where,ok);
+					doubleCutR(rez, where, ok);
 				}
 			}
 	    }
@@ -320,7 +333,6 @@ std::vector<std::vector<int>> AEGraph::possible_erasures(int level) const {
 
 AEGraph AEGraph::erase(std::vector<int> where) const {
     // 10p
-    // std::cerr<<this->repr()<<std::endl;
     return AEGraph("()");
 }
 

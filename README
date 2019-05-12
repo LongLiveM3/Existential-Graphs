@@ -1,0 +1,76 @@
+@Copyright [2019] Grecu Andrei George - Teodora Moraru (LongLiveM3 - jolie369)
+315CA
+https://github.com/LongLiveM3/Existential-Graphs/
+
+	Tema 3 SD - 2019
+
+	Implementarile functiilor folosesc recursivitate, inafara de functia possible_deiterations().
+
+	- aegraph.cpp:
+		Task 1
+		-possible_double_cuts() + possibleDCR()
+		path: variabila ce retine un drum posibil
+		res: variabila ce retine toate drumurile posibile
+		g: copie a grafului de analizat
+
+		anterior: numarul de subgrafuri ("frati") al nodului trecut
+
+		Se verifica daca nodul trecut si cel curent au cate un singur subgraf si daca da, se
+		poate adauga pathu-ul catre acele doua taieturi in res(vectorul de rezultat).
+		Se continua cautarea in adancimea grafului pentru restul paht-urilor.
+
+		Task 2
+		-double_cut() + doubleCutR():
+		g: variabila ce va retine graful modificat conform drumului specificat in where
+			initial copie a grafului de modificat
+		ok: variabila ce verifica daca s-a produs modificarea necesara; cu ea ne asiguram
+			ca nu se fac eliminari multiple
+
+		Se trece prin toate subgrafurile si se alege cel corespunzator path-ului din where.
+
+		Daca este un drum mai mare de o latura se elimina din where latura pe care am mers
+		deja si se reapeleaza functia.
+
+		Daca suntem pozitionati cu un nod mai sus decat unde vrem sa facem stergerea, vom
+		face eliminarea primului set de paranteze, legarea atomilor de la nodul de peste doua
+		taieturi la nodul curent si eliminarea celui de-al doilea set de paranteze.
+		
+		Task 3
+		-possible_erasures() + possibleER():
+		
+
+		Task 4
+		-erase() + eraseR():
+		g: variabila ce va retine graful modificat conform drumului specificat in where
+			initial copie a grafului de modificat
+		ok: variabila ce verifica daca s-a produs modificarea necesara; cu ea ne asiguram
+			ca nu se fac eliminari multiple
+
+		Se trece prin toate subgrafurile si toti atomii si se alege cel corespunzator path-ului din
+		where.
+
+		Daca este un drum mai mare de o latura se elimina din where latura pe care am mers
+		deja si se reapeleaza functia.
+
+		Daca suntem pozitionati cu un mai sus nod decat unde vrem sa facem stergerea, vom
+		face eliminarea subgrafului, daca acesta este subgraf, sau eliminarea atomului, daca
+		acesta este atom.
+
+		Task 5
+		-possible_deiterations():
+		path: variabila ce retine un drumurile posibil
+		res: variabila ce retine toate drumurile posibile
+		g: copie a grafului de analizat
+		
+		Se trece prin toate subgrafurile si toti atomii nodului curent.
+		Daca iteratorul arata catre un subgraf, acesta se copiaza in path ca drum catre o
+		deiterare valida.
+		Daca iteratorul arata catre un atom, drumul se copiaza in path ca drum catre o
+		deiterare valida.
+		Se trece prin toate intrarile din path si se copiaza toate in vectorul res care nu coincid cu
+		deiterarea cautata.
+
+		Task 6
+		- deiterate():
+
+		

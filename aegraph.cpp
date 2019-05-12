@@ -250,7 +250,6 @@ std::vector<std::vector<int>> AEGraph::get_paths_to(const AEGraph& other)
 
 void possibleDCR(AEGraph x, int anterior,
 	std::vector<std::vector<int>>& rez, std::vector<int>& path){
-	
 	if(anterior >= 1 && x.num_subgraphs() == 1 && x.num_atoms() == 0){
 		rez.push_back(path);
 	}
@@ -274,7 +273,7 @@ std::vector<std::vector<int>> AEGraph::possible_double_cuts() const {
 
 void copyGraf(AEGraph& x, const AEGraph* y){
 	int ok = 1;
-    for(int i = 0; i < y->num_subgraphs(); ++i){
+    for (int i = 0; i < y->num_subgraphs(); ++i){
     	x.subgraphs.push_back(y->subgraphs[i]);
     	if(ok){
     		for(auto i : y->atoms){
@@ -330,17 +329,56 @@ std::vector<std::vector<int>> AEGraph::possible_erasures(int level) const {
     return {};
 }
 
+void eraseR(AEGraph& rez, std::vector<int>& where, int& ok){
+	std::cerr << where.front() << " " << where.size() << " " << rez.num_subgraphs() << std::endl;
+	for(int i = 0; i < rez.num_subgraphs(); ++i){
+		if(where.front() == i){
+			if(where.size() >= 1){
+				where.erase(where.begin());
+				std::cerr << rez << std::endl;
+				eraseR(rez.subgraphs[i], where, ok);
+				std::cerr << rez << std::endl;
+			}
+			std::cerr << rez << std::endl;
+		}
+	}
+}
 
 AEGraph AEGraph::erase(std::vector<int> where) const {
     // 10p
-    return AEGraph("()");
+    AEGraph rez("()");
+    rez.atoms.pop_back();
+    copyGraf(rez, this);
+    int ok = 1;
+    eraseR(rez, where, ok);
+    return rez;
 }
 
+void possibleD(AEGraph x, std::vector<std::vector<int>>& rez){
+	std::vector<std::vector<int>> partial_path;
+	std::string at;
+	for(int i = 0; i < x.size(); ++i){
+		if(i < x.num_subgraphs()){
+			partial_path = x.get_paths_to(x[i]);
+		} else {
+			at = x[i].repr();
+			at = at[1];
+			partial_path = x.get_paths_to(at);
+		}
+		for(int j = 0; j < partial_path.size(); ++j){
+			if(partial_path[j][0] != i){
+				rez.push_back(partial_path[j]);
+			}
+		}
+	}
+}
 
 std::vector<std::vector<int>> AEGraph::possible_deiterations() const {
     // 20p
-
-    return {};
+	std::vector<std::vector<int>> rez = {};
+    AEGraph g(repr());
+    possibleD(g, rez);
+    return rez;
 }
 
 AEGraph AEGraph::deiterate(std::vector<int> where) const {
@@ -348,4 +386,3 @@ AEGraph AEGraph::deiterate(std::vector<int> where) const {
 
     return AEGraph("()");
 }
-

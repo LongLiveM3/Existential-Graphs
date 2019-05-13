@@ -16,7 +16,7 @@ Tema 3 SD - 2019
 		anterior: numarul de subgrafuri ("frati") al nodului trecut
 
 		Se verifica daca nodul trecut si cel curent au cate un singur subgraf si daca da, se
-		poate adauga pathu-ul catre acele doua taieturi in res(vectorul de rezultat).
+		poate adauga path-ul catre acele doua taieturi in res(vectorul de rezultat).
 		Se continua cautarea in adancimea grafului pentru restul paht-urilor.
 
 		Task 2
@@ -97,8 +97,8 @@ Tema 3 SD - 2019
 
     Se trece recursiv prin subgrafurile lui rez pana la determinarea grafului corespunzator
     path-ului din where.
-    Se salveaza in partial_path toate drumurile posibile din rez2 pana la subgraful sau atomul
+    Se salveaza in paths toate drumurile posibile din rez2 pana la subgraful sau atomul
     determinat anterior.
     In functia deiterate() se salveaza in rez2 noul graf dupa ce sunt sterse cu ajutorul
     functiei erase() toate subgrafurile sau toti atomii dati de drumurile din vectorul
-    partial_path.
+    paths.

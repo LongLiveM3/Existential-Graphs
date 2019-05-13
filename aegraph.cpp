@@ -245,19 +245,22 @@ std::vector<std::vector<int>> AEGraph::get_paths_to(const AEGraph& other)
             copy(r.begin(), r.end(), back_inserter(paths));
         }
     }
-
     return paths;
 }
 
-void possibleDCR(AEGraph x, int anterior,
-	std::vector<std::vector<int>>& rez, std::vector<int>& path){
-	if(anterior >= 1 && x.num_subgraphs() == 1 && x.num_atoms() == 0){
-		rez.push_back(path);
+void possibleDCR(AEGraph g, int anterior,
+	std::vector<std::vector<int>>& res, std::vector<int>& path){
+	// daca nodul trecut are un subgraf + daca nodul curent are un subgraf
+	// si nodul curent nu are atomi
+	if(anterior >= 1 && g.num_subgraphs() == 1 && g.num_atoms() == 0){
+		res.push_back(path);
 	}
-	if(x.num_subgraphs() >= 1){
-		for(int i = 0; i < x.num_subgraphs(); ++i){
+	// daca nodul curent are mai multe subgrafuri
+	if(g.num_subgraphs() >= 1){
+		for(int i = 0; i < g.num_subgraphs(); ++i){
+			// se adauga la path
 			path.push_back(i);
-			possibleDCR(x.subgraphs[i], x.num_subgraphs(), rez, path);
+			possibleDCR(g.subgraphs[i], g.num_subgraphs(), res, path);
 			path.pop_back();
 		}
 	}
@@ -265,46 +268,34 @@ void possibleDCR(AEGraph x, int anterior,
 
 std::vector<std::vector<int>> AEGraph::possible_double_cuts() const {
     // 10p
-    std::vector<std::vector<int>> rez = {};
+    std::vector<std::vector<int>> res = {};
     std::vector<int> path = {};
     AEGraph g(repr());
-    possibleDCR(g, -1, rez, path);
-    return rez;
+    possibleDCR(g, -1, res, path);
+    return res;
 }
 
-void copyGraf(AEGraph& x, const AEGraph* y){
-    for (int i = 0; i < y->num_subgraphs(); ++i){
-    	x.subgraphs.push_back(y->subgraphs[i]);
-    }
-    for (auto i : y->atoms){
-	    x.atoms.push_back(i);
-	  }
-}
-
-void doubleCutR(AEGraph& rez, std::vector<int>& where, int& ok){
-		for(int i = 0; i < rez.num_subgraphs(); ++i){
+void doubleCutR(AEGraph& g, std::vector<int>& where, int& ok){
+		for(int i = 0; i < g.num_subgraphs(); ++i){
+			// daca drumul e acelasi cu cel dat in where
 			if(where.front() == i){
 		    	if(where.size() > 1){
 		    		where.erase(where.begin());
-		    		doubleCutR(rez.subgraphs[i], where, ok);
+		    		doubleCutR(g.subgraphs[i], where, ok);
 		    	}
 		  		if(ok && where.size() == 1){
-			  		rez.subgraphs[where[0]] =
-			  			rez.subgraphs[where[0]].subgraphs[0];
-					for(auto a : rez.subgraphs[where[0]].atoms){
-						rez.atoms.push_back(a);
+		  			// eliminarea primului set de paranteze patrate(prima taietura)
+			  		g.subgraphs[where[0]] =
+			  			g.subgraphs[where[0]].subgraphs[0];
+			  		// trecerea prin toti atomii nivelului si copierea lor
+					for(auto a : g.subgraphs[where[0]].atoms){
+						g.atoms.push_back(a);
 					}
-					rez.subgraphs[where[0]].atoms.clear();
-					std::vector<AEGraph> sub;
-					for(int i = 0; i < rez.num_subgraphs(); i++){
-						if(i != where[0]){
-							sub.push_back(rez.subgraphs[i]);
-						}
-					}
-					rez.subgraphs.clear();
-					rez.subgraphs = sub;
+					g.subgraphs[where[0]].atoms.clear();
+					// eliminarea celui de-al doilea set de paranteze(a doua taietura)
+					g.subgraphs.erase(g.subgraphs.begin() + where[0]);
 					ok = 0;
-					doubleCutR(rez, where, ok);
+					doubleCutR(g, where, ok);
 				}
 			}
 	    }
@@ -312,136 +303,145 @@ void doubleCutR(AEGraph& rez, std::vector<int>& where, int& ok){
 
 AEGraph AEGraph::double_cut(std::vector<int> where) const {
     // 10p
-    AEGraph rez("()");
-    rez.atoms.pop_back();
-    copyGraf(rez, this);
+    AEGraph g(repr());
     int ok = 1;
-    doubleCutR(rez, where, ok);
-    return rez;
-    return AEGraph("()");
+    doubleCutR(g, where, ok);
+    return g;
 }
 
-void possibleER(AEGraph x, int anterior,
-	std::vector<std::vector<int>>& rez, std::vector<int>& path, int ok){
+void possibleER(AEGraph g, std::vector<std::vector<int>>& res,
+	std::vector<int>& path, int ok){
+    // verificarea conditiilor de nivelul
+    // (nivel initial sau nivel par
+    // cu mai multi frati in taietura)
     if (path.size() == 1 || (path.size() % 2 == 1 && ok)){
-      rez.push_back(path);
-  	}
-    ok = 0;
-    if (x.size() >= 1){
-  		for(int i = 0; i < x.size(); ++i){
-  			path.push_back(i);
-        if (x.size() > 1) ok = 1;
-        if (i < x.num_subgraphs()){
-  			  possibleER(x.subgraphs[i], x.num_subgraphs(), rez, path, ok);
-        } else if ((path.size() % 2 == 1 && ok) || path.size() == 1){
-          rez.push_back(path);
-        }
-  			path.pop_back();
-  	  }
+      res.push_back(path);
     }
-  }
+
+    ok = 0;
+    if (g.size() >= 1){
+      // parcurgerea subgrafurilor si atomilor
+  		for(int i = 0; i < g.size(); ++i){
+  			path.push_back(i);
+        // verificarea conditiei de mai multi frati in taietura
+	        if (g.size() > 1) ok = 1;
+          // in cazul pentru subgrafuri se apeleaza recursiv functia
+	        if (i < g.num_subgraphs()){
+	  			possibleER(g.subgraphs[i], res, path, ok);
+          // in cazul pentru atomi sunt verificate conditiile de nivel
+	        } else if ((path.size() % 2 == 1 && ok) || path.size() == 1){
+	          	res.push_back(path);
+	        }
+  			path.pop_back();
+  	  	}
+    }
+}
 
 std::vector<std::vector<int>> AEGraph::possible_erasures(int level) const {
     // 10p
-    std::vector<std::vector<int>> rez = {};
+    std::vector<std::vector<int>> res = {};
     std::vector<int> path = {};
-    int ok = 1;
+    int ok = level;
     AEGraph g(repr());
-    possibleER(g, -1, rez, path, ok);
-    return rez;
+    possibleER(g, res, path, ok);
+	return res;
 }
 
-void eraseR(AEGraph& rez, std::vector<int>& where, int& ok){
-	for(int i = 0; i < rez.size(); ++i){
+void eraseR(AEGraph& g, std::vector<int>& where, int& ok){
+	for(int i = 0; i < g.size(); ++i){
+		// daca drumul e acelasi cu cel dat in where
 		if(where.front() == i){
 			if(where.size() > 1){
 				where.erase(where.begin());
-				eraseR(rez.subgraphs[i], where, ok);
+				eraseR(g.subgraphs[i], where, ok);
 			}
-      if (ok && where.size() == 1){
-        if (i < rez.num_subgraphs()){
-          rez.subgraphs.erase(rez.subgraphs.begin() + where[0]);
-        } else{
-          rez.atoms.erase(rez.atoms.begin() + where[0] - rez.num_subgraphs());
-        }
-        ok = 0;
-      }
+	      	if(ok && where.size() == 1){
+	      		// eliminarea subgrafului daca path-ul din where e subgraf
+	        	if (i < g.num_subgraphs()){
+	          		g.subgraphs.erase(g.subgraphs.begin() + where[0]);
+	        	} else {  // eliminarea atomului daca path-ul din where e atom
+	          		g.atoms.erase(g.atoms.begin()
+	          			+ where[0] - g.num_subgraphs());
+	        	}
+	        	ok = 0;
+	      	}
 		}
 	}
 }
 
 AEGraph AEGraph::erase(std::vector<int> where) const {
     // 10p
-  AEGraph rez("()");
-  rez.atoms.pop_back();
-  copyGraf(rez, this);
-  int ok = 1;
-  eraseR(rez, where, ok);
-  return rez;
-}
-
-void possibleD(AEGraph x, std::vector<std::vector<int>>& rez){
-	std::vector<std::vector<int>> partial_path;
-	std::string at;
-	for(int i = 0; i < x.size(); ++i){
-		if(i < x.num_subgraphs()){
-			partial_path = x.get_paths_to(x[i]);
-		} else {
-			at = x[i].repr();
-			at = at[1];
-			partial_path = x.get_paths_to(at);
-		}
-		for(int j = 0; j < partial_path.size(); ++j){
-			if(partial_path[j][0] != i){
-				rez.push_back(partial_path[j]);
-			}
-		}
-	}
+    AEGraph g(repr());
+    int ok = 1;
+    eraseR(g, where, ok);
+    return g;
 }
 
 std::vector<std::vector<int>> AEGraph::possible_deiterations() const {
     // 20p
-    std::vector<std::vector<int>> rez = {};
+	std::vector<std::vector<int>> res = {};
+    std::vector<std::vector<int>> path;
+	std::string at;
     AEGraph g(repr());
-    possibleD(g, rez);
-    return rez;
+    // trecerea prin toti atomii si toate subgrafurile nodului curent
+	int i = 0;
+	while(i < g.size()){
+		// daca e subgraf
+		if(i < g.num_subgraphs()){
+			path = g.get_paths_to(g[i]);
+		} else {  // daca e atom
+			at = g[i].repr();
+			at = at[1];
+			path = g.get_paths_to(at);
+		}
+		// copierea inafara deiterarii cautate
+		for(auto j : path){
+			if(j[0] != i){
+				res.push_back(j);
+			}
+		}
+		++i;
+	}
+    return res;
 }
 
-void deiterateR(AEGraph& rez, AEGraph& rez2, std::vector<int>& where,
-  std::vector<std::vector<int>>& partial_path, int& ok){
-	for(int i = 0; i < rez.size(); ++i){
+void deiterateR(AEGraph g1, AEGraph& g2, std::vector<int>& where,
+  std::vector<std::vector<int>>& paths, int& ok){
+  // se parcurge recursiv graful pana la aflarea grafului dat de where
+	for(int i = 0; i < g1.size(); ++i){
 		if(where.front() == i){
 			if(where.size() > 1){
 				where.erase(where.begin());
-				deiterateR(rez.subgraphs[i], rez2, where, partial_path, ok);
+				deiterateR(g1.subgraphs[i], g2, where, paths, ok);
 			}
-
-    if (ok && where.size() == 1){
-        if (i < rez.num_subgraphs()){
-          partial_path = rez2.get_paths_to(rez.subgraphs[where[0]]);
-        } else{
-    			partial_path = rez2.get_paths_to(rez.atoms[where[0] -
-            rez.num_subgraphs()]);
-        }
-        ok = 0;
-      }
-    }
+	    	if (ok && where.size() == 1){
+          // salvarea drumurilor pentru deiterare pana la graful
+          // aflat anterior
+	        	if (i < g1.num_subgraphs()){
+	          	paths = g2.get_paths_to(g1.subgraphs[where[0]]);
+              // cazul pentru subgrafuri
+	        	} else{
+	    			  paths = g2.get_paths_to(g1.atoms[where[0] -
+	            	g1.num_subgraphs()]);  // cazul pentru atomi
+	        	}
+	        	ok = 0;
+	      	}
+    	}
 	}
 }
 
 AEGraph AEGraph::deiterate(std::vector<int> where) const {
     // 10p
-    AEGraph rez("()");
-    rez.atoms.pop_back();
-    copyGraf(rez, this);
-    AEGraph rez2("()");
-    rez2.atoms.pop_back();
-    copyGraf(rez2, this);
+    // graful initial prin care se ajunge la graful dat de where
+    AEGraph g1(repr());
+    AEGraph g2(repr());  // graful final dupa stergeri
     int ok = 1;
-    std::vector<std::vector<int>> partial_path;
-    deiterateR(rez, rez2, where, partial_path, ok);
-    for (int i = 0; i < partial_path.size(); i++){
-      rez2 = rez.erase(partial_path[i]);
+    std::vector<std::vector<int>> paths;
+    deiterateR(g1, g2, where, paths, ok);
+    // se sterg subgrafurile si grafurile date de path-urile
+    // salvate in vectorul de drumuri
+    for (unsigned int i = 0; i < paths.size(); i++){
+      g2 = g1.erase(paths[i]);
     }
-    return rez2;
+	return g2;
 }

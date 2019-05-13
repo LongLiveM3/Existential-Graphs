@@ -353,7 +353,7 @@ void eraseR(AEGraph& g, std::vector<int>& where, int& ok){
 	      		// eliminarea subgrafului daca path-ul din where e subgraf
 	        	if (i < g.num_subgraphs()){
 	          		g.subgraphs.erase(g.subgraphs.begin() + where[0]);
-	        	} else { // eliminarea atomului daca path-ul din where e atom
+	        	} else {  // eliminarea atomului daca path-ul din where e atom
 	          		g.atoms.erase(g.atoms.begin()
 	          			+ where[0] - g.num_subgraphs());
 	        	}
@@ -383,7 +383,7 @@ std::vector<std::vector<int>> AEGraph::possible_deiterations() const {
 		// daca e subgraf
 		if(i < g.num_subgraphs()){
 			path = g.get_paths_to(g[i]);
-		} else { // daca e atom
+		} else {  // daca e atom
 			at = g[i].repr();
 			at = at[1];
 			path = g.get_paths_to(at);
@@ -399,7 +399,36 @@ std::vector<std::vector<int>> AEGraph::possible_deiterations() const {
     return res;
 }
 
+void deiterateR(AEGraph g1, AEGraph& g2, std::vector<int>& where,
+  std::vector<std::vector<int>>& partial_path, int& ok){
+	for(int i = 0; i < g1.size(); ++i){
+		if(where.front() == i){
+			if(where.size() > 1){
+				where.erase(where.begin());
+				deiterateR(g1.subgraphs[i], g2, where, partial_path, ok);
+			}
+	    	if (ok && where.size() == 1){
+	        	if (i < g1.num_subgraphs()){
+	          		partial_path = g2.get_paths_to(g1.subgraphs[where[0]]);
+	        	} else{
+	    			partial_path = g2.get_paths_to(g1.atoms[where[0] -
+	            	g1.num_subgraphs()]);
+	        	}
+	        	ok = 0;
+	      	}
+    	}
+	}
+}
+
 AEGraph AEGraph::deiterate(std::vector<int> where) const {
     // 10p
-    return AEGraph("()");
+    AEGraph g1(repr());  //
+    AEGraph g2(repr());  // graful final dupa stergeri
+    int ok = 1;
+    std::vector<std::vector<int>> path;  // partial_path
+    deiterateR(g1, g2, where, path, ok);
+    for (unsigned int i = 0; i < path.size(); i++){
+      g2 = g1.erase(path[i]);
+    }
+	return g2;
 }

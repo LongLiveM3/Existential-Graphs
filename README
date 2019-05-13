@@ -91,14 +91,14 @@ Tema 3 SD - 2019
     g1: copie a grafului cu ajutorul careia se va ajunge la graful corespunzator
          path-ului din where
     g2: copie a grafului cu ajutorul careia cautam in graful initial toate drumurile
-    posibile pana la graful determinat la rez
+    posibile pana la graful determinat la g1
     paths: vectorul de drumuri posibile pentru deiteration
-                  pana la graful determinat la rez
+                  pana la graful determinat la g1
 
-    Se trece recursiv prin subgrafurile lui rez pana la determinarea grafului corespunzator
+    Se trece recursiv prin subgrafurile lui g1 pana la determinarea grafului corespunzator
     path-ului din where.
-    Se salveaza in paths toate drumurile posibile din rez2 pana la subgraful sau atomul
+    Se salveaza in paths toate drumurile posibile din g2 pana la subgraful sau atomul
     determinat anterior.
-    In functia deiterate() se salveaza in rez2 noul graf dupa ce sunt sterse cu ajutorul
+    In functia deiterate() se salveaza in g2 noul graf dupa ce sunt sterse cu ajutorul
     functiei erase() toate subgrafurile sau toti atomii dati de drumurile din vectorul
     paths.

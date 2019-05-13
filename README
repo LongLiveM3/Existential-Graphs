@@ -40,21 +40,22 @@ https://github.com/LongLiveM3/Existential-Graphs/
 		path: variabila ce retine un drum posibil
 		res: variabila ce retine toate drumurile posibile
 		g: copie a grafului de analizat
-	    ok: variabila ce retine daca e indeplinita conditia de subgraf sau atom
+	    	ok: variabila ce retine daca e indeplinita conditia de subgraf sau atom
 		cu "frati" in taietura
 
-	    Se verifica daca sunt indeplinite conditia de nivel par si conditia
-	    variabilei ok sau conditia de nivel initial (cu ajutorul dimensiunii lui path)
-	    si se adauga path-ul posibil in res.
+	    	Se verifica daca sunt indeplinite conditia de nivel par si conditia
+	    	variabilei ok sau conditia de nivel initial (cu ajutorul dimensiunii lui path)
+	    	si se adauga path-ul posibil in res.
 
-	    Daca nodul in care suntem pozitionati mai are subgrafuri sau atomi,
-	    se trece pe rand prin fiecare dintre ei, adaugandu-i in path.
+	    	Daca nodul in care suntem pozitionati mai are subgrafuri sau atomi,
+	    	se trece pe rand prin fiecare dintre ei, adaugandu-i in path.
 
-	    Se verifica si se retine in variabila ok daca exista mai multi "copii"
-	    in sectiunea curenta.
+	    	Se verifica si se retine in variabila ok daca exista mai multi "copii"
+	    	in sectiunea curenta.
 
-	    Pentru subgrafuri, se apeleaza recursiv functia possibleER() pe noul subgraf.
-	    Pentru atomi se verifica indeplinirea conditiilor de nivel enumerate anterior
+	    	Pentru subgrafuri, se apeleaza recursiv functia possibleER() pe noul subgraf.
+
+	    	Pentru atomi se verifica indeplinirea conditiilor de nivel enumerate anterior
 		si se adauga path-ul posibil in res.
 
 		Task 4

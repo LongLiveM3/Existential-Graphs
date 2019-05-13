@@ -1,100 +1,17 @@
-Tema 3 SD - 2019
+To run the checker, all you have to do is execute the "./run_all.sh" command.
+This command compiles your source files, then compiles the test source files
+(present in the _test folder) and runs all the test executables newly created.
+Then the checker collects all the test scores and adds them up.
 
-	Implementarile functiilor folosesc recursivitate, inafara de functia possible_deiterations().
+If you want to run the checker after changing your implementation files, all
+you have to do is run the same command again. The checker will run the Makefile
+so you won't have to do so manually.
 
-	- aegraph.cpp:
-		Task 1
-		-possible_double_cuts() + possibleDCR()
-		path: variabila ce retine un drum posibil
-		res: variabila ce retine toate drumurile posibile
-		g: copie a grafului de analizat
+To run the coding style checker, you can run the
+"./cpplint.py *.cpp *.h" command. The run_all.sh script also checks
+your coding style and scales your score accordingly.
 
-		anterior: numarul de subgrafuri ("frati") al nodului trecut
-
-		Se verifica daca nodul trecut si cel curent au cate un singur subgraf si daca da, se
-		poate adauga pathu-ul catre acele doua taieturi in res(vectorul de rezultat).
-		Se continua cautarea in adancimea grafului pentru restul paht-urilor.
-
-		Task 2
-		-double_cut() + doubleCutR():
-		g: variabila ce va retine graful modificat conform drumului specificat in where
-			initial copie a grafului de modificat
-		ok: variabila ce verifica daca s-a produs modificarea necesara; cu ea ne asiguram
-			ca nu se fac eliminari multiple
-
-		Se trece prin toate subgrafurile si se alege cel corespunzator path-ului din where.
-
-		Daca este un drum mai mare de o latura se elimina din where latura pe care am mers
-		deja si se reapeleaza functia.
-
-		Daca suntem pozitionati cu un nod mai sus decat unde vrem sa facem stergerea, vom
-		face eliminarea primului set de paranteze, legarea atomilor de la nodul de peste doua
-		taieturi la nodul curent si eliminarea celui de-al doilea set de paranteze.
-
-		Task 3
-		-possible_erasures() + possibleER():
-    path: variabila ce retine un drum posibil
-		res: variabila ce retine toate drumurile posibile
-		g: copie a grafului de analizat
-    ok: variabila ce retine daca e indeplinita conditia de subgraf sau atom
-        cu "frati" in taietura
-
-    Se verifica daca sunt indeplinite conditia de nivel par si conditia
-    variabilei ok sau conditia de nivel initial (cu ajutorul dimensiunii lui path)
-    si se adauga path-ul posibil in res.
-
-    Daca nodul in care suntem pozitionati mai are subgrafuri sau atomi,
-    se trece pe rand prin fiecare dintre ei, adaugandu-i in path.
-    Se verifica si se retine in variabila ok daca exista mai multi "copii"
-    in sectiunea curenta.
-    Pentru subgrafuri, se apeleaza recursiv functia possibleER() pe noul subgraf.
-    Pentru atomi se verifica indeplinirea conditiilor de nivel enumerate anterior
-    si se adauga path-ul posibil in res.
-
-		Task 4
-		-erase() + eraseR():
-		g: variabila ce va retine graful modificat conform drumului specificat in where
-			initial copie a grafului de modificat
-		ok: variabila ce verifica daca s-a produs modificarea necesara; cu ea ne asiguram
-			ca nu se fac eliminari multiple
-
-		Se trece prin toate subgrafurile si toti atomii si se alege cel corespunzator path-ului din
-		where.
-
-		Daca este un drum mai mare de o latura se elimina din where latura pe care am mers
-		deja si se reapeleaza functia.
-
-		Daca suntem pozitionati cu un nod mai sus decat unde vrem sa facem stergerea, vom
-		face eliminarea subgrafului, daca acesta este subgraf, sau eliminarea atomului, daca
-		acesta este atom.
-
-		Task 5
-		-possible_deiterations():
-		path: variabila ce retine un drum posibil
-		rez: variabila ce retine toate drumurile posibile
-		g: copie a grafului de analizat
-
-		Se trece prin toate subgrafurile si toti atomii nodului curent.
-		Daca iteratorul arata catre un subgraf, acesta se copiaza in path ca drum catre o
-		deiterare valida.
-		Daca iteratorul arata catre un atom, drumul se copiaza in path ca drum catre o
-		deiterare valida.
-		Se trece prin toate intrarile din path si se copiaza toate in vectorul res care nu coincid cu
-		deiterarea cautata.
-
-		Task 6
-		- deiterate() + deiterateR():
-    rez: copie a grafului cu ajutorul careia se va ajunge la graful corespunzator
-         path-ului din where
-    rez2: copie a grafului cu ajutorul careia cautam in graful initial toate drumurile
-    posibile pana la graful determinat la rez
-    partial_path: vectorul de drumuri posibile pentru deiteration
-                  pana la graful determinat la rez
-
-    Se trece recursiv prin subgrafurile lui rez pana la determinarea grafului corespunzator
-    path-ului din where.
-    Se salveaza in partial_path toate drumurile posibile din rez2 pana la subgraful sau atomul
-    determinat anterior.
-    In functia deiterate() se salveaza in rez2 noul graf dupa ce sunt sterse cu ajutorul
-    functiei erase() toate subgrafurile sau toti atomii dati de drumurile din vectorul
-    partial_path.
+The archive you have to upload to vmchecker should contain:
+- README, describing the implementation and personal contributions of team
+members
+- aegraph.cpp

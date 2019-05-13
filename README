@@ -2,7 +2,7 @@
 315CA
 https://github.com/LongLiveM3/Existential-Graphs/
 
-Tema 3 SD - 2019
+	Tema 3 SD - 2019
 
 	Implementarile functiilor folosesc recursivitate, inafara de functia possible_deiterations().
 
@@ -16,7 +16,7 @@ Tema 3 SD - 2019
 		anterior: numarul de subgrafuri ("frati") al nodului trecut
 
 		Se verifica daca nodul trecut si cel curent au cate un singur subgraf si daca da, se
-		poate adauga path-ul catre acele doua taieturi in res(vectorul de rezultat).
+		poate adauga pathu-ul catre acele doua taieturi in res(vectorul de rezultat).
 		Se continua cautarea in adancimea grafului pentru restul paht-urilor.
 
 		Task 2
@@ -34,26 +34,28 @@ Tema 3 SD - 2019
 		Daca suntem pozitionati cu un nod mai sus decat unde vrem sa facem stergerea, vom
 		face eliminarea primului set de paranteze, legarea atomilor de la nodul de peste doua
 		taieturi la nodul curent si eliminarea celui de-al doilea set de paranteze.
-
+		
 		Task 3
 		-possible_erasures() + possibleER():
-    path: variabila ce retine un drum posibil
+		path: variabila ce retine un drum posibil
 		res: variabila ce retine toate drumurile posibile
 		g: copie a grafului de analizat
-    ok: variabila ce retine daca e indeplinita conditia de subgraf sau atom
-        cu "frati" in taietura
+	    ok: variabila ce retine daca e indeplinita conditia de subgraf sau atom
+		cu "frati" in taietura
 
-    Se verifica daca sunt indeplinite conditia de nivel par si conditia
-    variabilei ok sau conditia de nivel initial (cu ajutorul dimensiunii lui path)
-    si se adauga path-ul posibil in res.
+	    Se verifica daca sunt indeplinite conditia de nivel par si conditia
+	    variabilei ok sau conditia de nivel initial (cu ajutorul dimensiunii lui path)
+	    si se adauga path-ul posibil in res.
 
-    Daca nodul in care suntem pozitionati mai are subgrafuri sau atomi,
-    se trece pe rand prin fiecare dintre ei, adaugandu-i in path.
-    Se verifica si se retine in variabila ok daca exista mai multi "copii"
-    in sectiunea curenta.
-    Pentru subgrafuri, se apeleaza recursiv functia possibleER() pe noul subgraf.
-    Pentru atomi se verifica indeplinirea conditiilor de nivel enumerate anterior
-    si se adauga path-ul posibil in res.
+	    Daca nodul in care suntem pozitionati mai are subgrafuri sau atomi,
+	    se trece pe rand prin fiecare dintre ei, adaugandu-i in path.
+
+	    Se verifica si se retine in variabila ok daca exista mai multi "copii"
+	    in sectiunea curenta.
+
+	    Pentru subgrafuri, se apeleaza recursiv functia possibleER() pe noul subgraf.
+	    Pentru atomi se verifica indeplinirea conditiilor de nivel enumerate anterior
+		si se adauga path-ul posibil in res.
 
 		Task 4
 		-erase() + eraseR():
@@ -68,16 +70,16 @@ Tema 3 SD - 2019
 		Daca este un drum mai mare de o latura se elimina din where latura pe care am mers
 		deja si se reapeleaza functia.
 
-		Daca suntem pozitionati cu un nod mai sus decat unde vrem sa facem stergerea, vom
+		Daca suntem pozitionati cu un mai sus nod decat unde vrem sa facem stergerea, vom
 		face eliminarea subgrafului, daca acesta este subgraf, sau eliminarea atomului, daca
 		acesta este atom.
 
 		Task 5
 		-possible_deiterations():
-		path: variabila ce retine un drum posibil
-		rez: variabila ce retine toate drumurile posibile
+		path: variabila ce retine un drumurile posibil
+		res: variabila ce retine toate drumurile posibile
 		g: copie a grafului de analizat
-
+		
 		Se trece prin toate subgrafurile si toti atomii nodului curent.
 		Daca iteratorul arata catre un subgraf, acesta se copiaza in path ca drum catre o
 		deiterare valida.
@@ -87,18 +89,24 @@ Tema 3 SD - 2019
 		deiterarea cautata.
 
 		Task 6
-		- deiterate() + deiterateR():
-    g1: copie a grafului cu ajutorul careia se va ajunge la graful corespunzator
-         path-ului din where
-    g2: copie a grafului cu ajutorul careia cautam in graful initial toate drumurile
-    posibile pana la graful determinat la g1
-    paths: vectorul de drumuri posibile pentru deiteration
-                  pana la graful determinat la g1
+		- deiterate():
+		g1: copie a grafului cu ajutorul careia se va ajunge la graful corespunzator
+        	path-ului din where
+		g2: copie a grafului cu ajutorul careia cautam in graful initial toate drumurile
+			posibile pana la graful determinat la g1
+		paths: vectorul de drumuri posibile pentru deiteration
+        	pana la graful determinat la g1
 
-    Se trece recursiv prin subgrafurile lui g1 pana la determinarea grafului corespunzator
-    path-ului din where.
-    Se salveaza in paths toate drumurile posibile din g2 pana la subgraful sau atomul
-    determinat anterior.
-    In functia deiterate() se salveaza in g2 noul graf dupa ce sunt sterse cu ajutorul
-    functiei erase() toate subgrafurile sau toti atomii dati de drumurile din vectorul
-    paths.
+		Se trece recursiv prin subgrafurile lui g1 pana la determinarea grafului corespunzator
+		path-ului din where.
+
+		Se salveaza in paths toate drumurile posibile din g2 pana la subgraful sau atomul
+		determinat anterior.
+
+		In functia deiterate() se salveaza in g2 noul graf dupa ce sunt sterse cu ajutorul
+		functiei erase() toate subgrafurile sau toti atomii dati de drumurile din vectorul
+		paths.
+		
+
+
+
